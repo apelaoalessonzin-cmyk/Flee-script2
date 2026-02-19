@@ -1,17 +1,20 @@
 --[[
-    Flee the Facility Hub - Orion Edition
-    Customizado para Mobile (Sem Intro e com Botão de Toggle)
+    Flee the Facility Hub - Orion Edition (FIXED)
+    - Link de carregamento atualizado (sem erro 404)
+    - Sem Intro (evita bloqueio de toque no celular)
+    - Botão MENU lateral para fechar/abrir a UI
 ]]
 
-local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
+-- Carregamento com link estável
+local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/jensonhirst/Orion/main/source')))()
 
--- Criando a Janela sem a notificação de Intro (IntroEnabled = false)
+-- Criando a Janela (IntroEnabled = false remove a notificação de carregamento)
 local Window = OrionLib:MakeWindow({
     Name = "🎮 Flee the Facility Hub", 
     HidePremium = true, 
     SaveConfig = true, 
     ConfigFolder = "FleeHubOrion",
-    IntroEnabled = false -- Remove a mensagem e animação inicial "fantasma"
+    IntroEnabled = false -- Desativado para não bugar o clique no celular
 })
 
 -- SERVIÇOS
@@ -29,7 +32,7 @@ local speedLocked = false
 local AntiErrorOn = false
 local antiErrorHooked = false
 
--- BOTÃO FLUTUANTE (MOBILE FIX)
+-- BOTÃO FLUTUANTE (MOBILE TOGGLE)
 local ScreenGui = Instance.new("ScreenGui")
 local OpenBtn = Instance.new("TextButton")
 local Corner = Instance.new("UICorner")
@@ -43,7 +46,7 @@ OpenBtn.Parent = ScreenGui
 OpenBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 35)
 OpenBtn.BackgroundTransparency = 0.3
 OpenBtn.Position = UDim2.new(0, 10, 0.5, -22)
-OpenBtn.Size = UDim2.new(0, 50, 0, 45)
+OpenBtn.Size = UDim2.new(0, 55, 0, 45)
 OpenBtn.Font = Enum.Font.GothamBold
 OpenBtn.Text = "MENU"
 OpenBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -70,20 +73,13 @@ local function IsBeast(player)
     return false
 end
 
--- ABAS
+-- ABA VISUAIS
 local MainTab = Window:MakeTab({
     Name = "Visuals / ESP",
     Icon = "rbxassetid://4483345998",
     PremiumOnly = false
 })
 
-local PlayerTab = Window:MakeTab({
-    Name = "Player / Speed",
-    Icon = "rbxassetid://4483345998",
-    PremiumOnly = false
-})
-
--- CONFIGURAÇÕES ESP
 MainTab:AddToggle({
     Name = "ESP Players",
     Default = false,
@@ -113,9 +109,15 @@ MainTab:AddToggle({
     end    
 })
 
--- CONFIGURAÇÕES PLAYER
+-- ABA PLAYER
+local PlayerTab = Window:MakeTab({
+    Name = "Player / Speed",
+    Icon = "rbxassetid://4483345998",
+    PremiumOnly = false
+})
+
 PlayerTab:AddTextbox({
-    Name = "Velocidade Desejada",
+    Name = "Velocidade",
     Default = "16",
     TextDisappear = false,
     Callback = function(Text)
@@ -169,7 +171,7 @@ PlayerTab:AddToggle({
     end    
 })
 
--- LOOPS DE ATUALIZAÇÃO
+-- LOOP HEARTBEAT (ESP & SPEED)
 RunService.Heartbeat:Connect(function()
     if PlayerESPEnabled then
         for _, player in pairs(Players:GetPlayers()) do
@@ -212,7 +214,7 @@ RunService.Heartbeat:Connect(function()
                 tl.TextStrokeTransparency = 0
                 tl.TextScaled = true
                 tl.Font = Enum.Font.SourceSansBold
-                tl.Text = "FERA / BEAST"
+                tl.Text = "BEAST"
                 tl.Parent = bb
                 esp.Billboard = bb
             elseif not beast and esp.Billboard then
@@ -233,6 +235,7 @@ RunService.Heartbeat:Connect(function()
     end
 end)
 
+-- LOOP COMPUTADORES
 task.spawn(function()
     while true do
         task.wait(2)
